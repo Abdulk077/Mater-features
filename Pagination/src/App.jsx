@@ -1,10 +1,10 @@
-import Items from "./components/Items.jsx";
+import PaginationApp from "./components/PaginationApp.jsx";
 function App() {
 
   return (
     <>
       <div className="App">
-        <Items />
+        <PaginationApp />
       </div>
     </>
   );

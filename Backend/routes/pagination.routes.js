@@ -77,5 +77,5 @@ const getPaginatedResults = async (cursor, limit = 10, direction = "next") => {
     results.length > 0 ? results[results.length - 1]._id : null;
   const prevCursor = results.length > 0 ? results[0]._id : null;
 
-  return { data: results, nextCursor, prevCursor };
+  return { results, nextCursor, prevCursor };
 };
