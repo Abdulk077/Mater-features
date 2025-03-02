@@ -13,9 +13,9 @@ pagination.get("/", async (req, res) => {
     } else if (prevCursor) {
       query._id = { $gt: prevCursor };
     }
-
+    
     const items = await User.find(query)
-      .sort({ _id: prevCursor ? 1 : -1 })
+      .sort({ _id:  -1 })
       .limit(parseInt(limit) + 1);
 
     let nextCursor = null;
@@ -23,14 +23,13 @@ pagination.get("/", async (req, res) => {
     if (items.length > limit) {
       if (prevCursor) {
         prevCursorOut = items[0]._id; // Move forward
-        items.shift(); // Remove first item
       } else {
         nextCursor = items[limit - 1]._id; // Move backward
         items.pop(); // Remove last item
       }
     }
     if (!prevCursor && items.length > 0) {
-      prevCursorOut = items[0]._id.toString();
+      prevCursorOut = items[0]._id;
     }
 
     res.json({
@@ -42,5 +41,41 @@ pagination.get("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+pagination.get("/posts", async (req, res) => {
+  try {
+    const { cursor, limit, direction } = req.query;
+    const parsedLimit = parseInt(limit) || 10;
+    const paginationDirection = direction === "prev" ? "prev" : "next";
+
+    const data = await getPaginatedResults(
+      cursor,
+      parsedLimit,
+      paginationDirection
+    );
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default pagination;
+
+const getPaginatedResults = async (cursor, limit = 10, direction = "next") => {
+  let query = {};
+  let sort = { _id: -1 };
+
+  if (cursor) {
+    query._id = direction === "next" ? { $lt: cursor } : { $gt: cursor };
+    sort = direction === "next" ? { _id: -1 } : { _id: 1 };
+  }
+
+  let results = await User.find(query).sort(sort).limit(limit).exec();
+
+  if (direction === "prev") results.reverse(); // Keep order consistent
+
+  const nextCursor =
+    results.length > 0 ? results[results.length - 1]._id : null;
+  const prevCursor = results.length > 0 ? results[0]._id : null;
+
+  return { data: results, nextCursor, prevCursor };
+};
