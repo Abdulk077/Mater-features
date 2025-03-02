@@ -1,13 +1,15 @@
-import PaginationApp from "./components/PaginationApp.jsx";
-function App() {
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import PaginationApp from './components/PaginationApp';
 
+function App() {
   return (
-    <>
-      <div className="App">
-        <PaginationApp />
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<PaginationApp />} />
+        {/* Additional routes can be added here */}
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;

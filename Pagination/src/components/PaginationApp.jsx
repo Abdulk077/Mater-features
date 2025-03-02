@@ -89,17 +89,11 @@ const PaginationApp = () => {
 
       {/* Navigation buttons */}
       {!loading && (
-        <div className="flex justify-between mt-6">
-          <button
-            onClick={fetchPrevPage}
-            className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-300"
-          >
+        <div className="flex justify-center items-center gap-4 mt-4">
+          <button onClick={fetchPrevPage} className="btn btn-dash btn-primary">
             Previous
           </button>
-          <button
-            onClick={fetchNextPage}
-            className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300"
-          >
+          <button onClick={fetchNextPage} className="btn btn-dash btn-accent">
             Next
           </button>
         </div>
