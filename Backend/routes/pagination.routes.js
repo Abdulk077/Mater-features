@@ -2,7 +2,8 @@ import { Router } from "express";
 import User from "../model/user.model.js";
 
 const pagination = Router();
-
+// cursorbased pagination
+// this is the most efficient one / method
 pagination.get("/", async (req, res) => {
   try {
     const { limit = 10, cursor, prevCursor } = req.query;
