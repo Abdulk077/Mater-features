@@ -23,43 +23,69 @@ search.get("/s", async (req, res) => {
     }
 });
 
+const categoryoptions = [
+    "All",
+    "Toys",
+    "Books",
+    "Shoes",
+    "Clothing",
+    "Health",
+    "Games",
+    "Music",
+];
+
+
 // searching with fitaration
 search.get("/", async (req, res) => {
     try {
-        const { search, category, brand } = req.query;
+        // Extracting query parameters
+        const page = parseInt(req.query.page) - 1 || 0;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.search || "";
+        let sort = req.query.sort || "rating";
+        let category = req.query.category || "All";
+        // Extracting genre from query
 
-        const query = {};
-
-        const andConditions = [];
-
-        // 🔍 Search using regex on name, brand, or description
-        if (search) {
-            const regex = new RegExp(search, "i"); // case-insensitive
-            andConditions.push({
-                $or: [{ name: regex }, { brand: regex }, { description: regex }],
-            });
+        category === "All"
+            ? (category = [...categoryoptions])
+            : (category = req.query.category.split(","));
+        // Constructing the sort
+        req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+        let sortBy = {};
+        if (sort[1]) {
+            sortBy[sort[0]] = sort[1];
+        } else {
+            sortBy[sort[0]] = "desc";
         }
+        // caling the database
+        const products = await Product.find({ name: { $regex: search, $options: "i" } })
+            .where("category")
+            .in(category)
+            .sort(sortBy)
+            .skip(page * limit)
+            .limit(limit);
 
-        // 🏷️ Filter by category (exact match)
-        if (category) {
-            andConditions.push({ category });
+        // Getting the total count of products
+        const total = await Product.countDocuments({
+            category: { $in: category },
+            name: { $regex: search, $options: "i" },
+        });
+
+        // Sending the response
+        const response = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            category: categoryoptions,
+            Product:products,
         }
+        res.status(200).json(response);
 
-        // 🏷️ Filter by brand (case-insensitive exact match using regex)
-        if (brand) {
-            const brandRegex = new RegExp(brand.trim(), "i");
-            andConditions.push({ brand: brandRegex });
 
-        }
 
-        if (andConditions.length > 0) {
-            query.$and = andConditions;
-        }
-
-        const products = await Product.find(query).limit(10);
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ error: "Server error", details: err.message });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 
 });
