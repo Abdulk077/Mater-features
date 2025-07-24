@@ -52,6 +52,21 @@ search.get("/", async (req, res) => {
         // Constructing the sort
         req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
         let sortBy = {};
+        /*const allowedFields = ["price", "rating", "name", "createdAt"];
+        const allowedOrders = ["asc", "desc"];
+
+        for (let i = 0; i < sort.length; i += 2) {
+            const field = sort[i];
+            const order = allowedOrders.includes(sort[i + 1])
+                ? sort[i + 1]
+                : "asc";
+
+            if (allowedFields.includes(field)) {
+                sortBy[field] = order;
+            }
+
+        }
+        */
         if (sort[1]) {
             sortBy[sort[0]] = sort[1];
         } else {
@@ -66,19 +81,19 @@ search.get("/", async (req, res) => {
             .limit(limit);
 
         // Getting the total count of products
-        const total = await Product.countDocuments({
+        /*const total = await Product.countDocuments({
             category: { $in: category },
             name: { $regex: search, $options: "i" },
-        });
+        });*/
 
         // Sending the response
         const response = {
             error: false,
-            total,
-            page: page + 1,
+            //total,
+            //page: page + 1,
             limit,
             category: categoryoptions,
-            Product:products,
+            Product: products,
         }
         res.status(200).json(response);
 
