@@ -1,16 +1,15 @@
 import React from "react";
 
+const categories = ["All", "Electronics", "Books", "Clothing", "Home"];
 const FilterControls = ({
-  categories,
-  selectedCategory,
-  setSelectedCategory,
+  setFilterCategory
 }) => {
   return (
     <div className="p-4">
       <select
         className="select select-bordered w-full max-w-xs"
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
+        value={setFilterCategory}
+        onChange={(e) => setFilterCategory(e.target.value)}
       >
         {categories.map((category) => (
           <option key={category} value={category}>
