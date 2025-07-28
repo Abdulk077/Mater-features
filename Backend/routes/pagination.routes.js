@@ -1,6 +1,5 @@
 import { Router } from "express";
 import User from "../model/user.model.js";
-
 const pagination = Router();
 // cursorbased pagination
 // this is the most efficient one / method

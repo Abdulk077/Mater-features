@@ -5,6 +5,7 @@ import pagination from "./routes/pagination.routes.js";
 import connectDB from "./db/db.js";
 import cors from "cors"; // added
 import search from "./routes/searching.routes.js";
+import payment from './routes/payment.routes.js'
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,13 +18,14 @@ app.use(cors()); // added
 // Get paginated items
 app.use("/pagination", pagination);
 app.use("/search",search);
+app.use("/payment",payment)
 // Delete an item by ID
 app.get("/", async (req, res) => {
   res.send("Testing api");
 });
 app.listen(PORT, async () => {
   console.log(
-    `Subscription Tracker API is running on http://localhost:${PORT}`
+    `API running on http://localhost:${PORT}`
   );
 
   await connectDB();
